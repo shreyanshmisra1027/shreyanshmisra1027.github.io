@@ -1,39 +1,42 @@
 export const profile = {
   name: 'Shreyansh',
-  fullName: 'Shreyansh H.',
-  role: 'Computer Science & Cybersecurity Student',
+  brandName: 'SHREYAN.SH',
+  fullName: 'Shreyansh',
+  role: 'Computer Science & Engineering Student',
+  specialization: 'Cybersecurity',
   university: 'VIT Chennai',
   graduationYear: 2030,
   location: 'India',
 
   hero: {
-    eyebrow: 'COMPUTER SCIENCE / CYBERSECURITY / ENGINEERING',
+    eyebrow: 'COMPUTER SCIENCE · CYBERSECURITY · ENGINEERING',
     heading: 'Building things.\nUnderstanding how they work.',
-    description: `I'm Shreyansh, a Computer Science student at VIT Chennai, exploring software engineering, systems programming, and cybersecurity. I enjoy understanding technology from the ground up and turning ideas into working software.`,
+    description: "I'm Shreyansh, a Computer Science student at VIT Chennai, exploring software engineering, systems programming, and cybersecurity. I enjoy understanding technology from the ground up and turning ideas into working software.",
   },
 
   about: {
     heading: 'A little about me.',
     paragraphs: [
-      `I'm a Computer Science and Engineering student at VIT Chennai, specializing in Cybersecurity. My journey in technology began with curiosity about how systems work at a fundamental level — from operating systems to low-level programming.`,
-      `I'm particularly interested in software engineering, systems programming, and the intersection of development and security. Linux and open-source development have taught me the value of understanding tools rather than just using them.`,
-      `My approach to learning is project-driven: I believe in building real software, solving actual problems, and understanding the "why" behind technologies. This portfolio itself is part of that philosophy — built from scratch with modern tools to create something genuinely useful.`,
+      "I'm a B.Tech Computer Science & Engineering student at VIT Chennai, with a specialized focus on Cybersecurity. My fascination lies in how computing systems operate at their lowest levels — from kernel internals and process isolation to binary exploitation and network protocols.",
+      "Rather than taking shortcuts or superficially consuming tutorials, I focus on building practical software from first principles. I spend significant time working in Linux environments (Arch Linux / Omarchy) and writing code in C, C++, and Python.",
+      "My long-term ambition is to become an exceptional software engineer at a leading global technology company, pairing rigorous systems-level software craftsmanship with defense-in-depth security engineering.",
     ],
     philosophy: {
       heading: 'Engineering Philosophy',
       items: [
-        'Mastery over shortcuts',
-        'Understanding over memorization',
-        'Building over consuming tutorials',
-        'Consistency over temporary motivation',
+        'Mastery over shortcuts.',
+        'Understanding over memorization.',
+        'Building over merely consuming tutorials.',
+        'Consistency over temporary motivation.',
+        'Writing code to solve actual problems.',
       ],
     },
   },
 
   contact: {
     heading: 'Have something interesting in mind?',
-    description: "I'm always open to discussing interesting projects, collaboration opportunities, or just chatting about technology.",
-    email: 'shreyansh@example.com', // UPDATE THIS
+    description: "Whether you want to discuss systems engineering, cybersecurity research, collaboration opportunities, or simply share ideas — my inbox is open.",
+    email: 'shreyanshmisra1027@gmail.com',
     github: 'https://github.com/shreyanshmisra1027',
     linkedin: 'https://www.linkedin.com/in/shreyansh-misra-0840323a1/',
   },

@@ -9,8 +9,8 @@ export default function Hero() {
 
   return (
     <section id="home" className="hero">
-      <div className="hero-content">
-        <div className="hero-text">
+      <div className="container hero-container">
+        <div className="hero-content">
           <div className="hero-eyebrow">
             {profile.hero.eyebrow}
           </div>
@@ -23,11 +23,8 @@ export default function Hero() {
             {profile.hero.description}
           </p>
           <div className="hero-buttons">
-            <button
-              onClick={scrollToProjects}
-              className="btn-primary"
-            >
-              Explore Projects
+            <button onClick={scrollToProjects} className="btn-primary">
+              View Projects
             </button>
             <a
               href={profile.contact.github}
@@ -39,12 +36,28 @@ export default function Hero() {
             </a>
           </div>
         </div>
+
         <div className="hero-visual">
-          <div className="canvas-container placeholder-3d">
-            <div className="placeholder-content">
-              <div className="placeholder-icon">⚙️</div>
-              <p>3D Processor Model</p>
-              <p className="placeholder-hint">Loading...</p>
+          <div className="tech-card">
+            <div className="tech-card-header">
+              <span className="dot red"></span>
+              <span className="dot yellow"></span>
+              <span className="dot green"></span>
+              <span className="tech-card-title">shreyansh@vit-chennai:~</span>
+            </div>
+            <div className="tech-card-body">
+              <p className="code-line"><span className="prompt">$</span> uname -r</p>
+              <p className="code-output">linux-arch-omarchy-x86_64</p>
+              <p className="code-line"><span className="prompt">$</span> cat ~/status.txt</p>
+              <p className="code-output">CSE Cybersecurity @ VIT Chennai (Class of '30)</p>
+              <p className="code-line"><span className="prompt">$</span> cat ~/focus.md</p>
+              <p className="code-output highlight">[Systems, C/C++, Linux, Kernel, Security]</p>
+              <p className="code-line"><span className="prompt">$</span> uptime</p>
+              <p className="code-output">up 24/7 building reliable software</p>
+            </div>
+            <div className="tech-card-footer">
+              <span className="status-indicator"></span>
+              <span>System operational</span>
             </div>
           </div>
         </div>
