@@ -1,0 +1,126 @@
+.contact {
+  background: var(--bg-primary);
+}
+
+.contact-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto 48px;
+  gap: 48px;
+}
+
+.contact-text {
+  flex: 1;
+}
+
+.contact-heading {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.contact-description {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.contact-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: all var(--transition-smooth);
+  min-width: 160px;
+}
+
+.contact-btn {
+  background: var(--accent);
+  color: var(--bg-primary);
+}
+
+.contact-btn:hover {
+  background: #00c5b5;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 214, 197, 0.2);
+}
+
+.contact-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.contact-btn-secondary:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.contact-social {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--text-secondary);
+  border-radius: 50%;
+  transition: all var(--transition-smooth);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+}
+
+.social-link:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+
+@media (max-width: 768px) {
+  .contact-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 32px;
+  }
+
+  .contact-heading {
+    font-size: 2rem;
+  }
+
+  .contact-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .contact-btn {
+    min-width: 140px;
+  }
+
+  .contact-social {
+    gap: 16px;
+  }
+
+  .social-link {
+    width: 40px;
+    height: 40px;
+  }
+}
