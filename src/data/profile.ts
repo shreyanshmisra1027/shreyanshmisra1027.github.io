@@ -1,12 +1,14 @@
 export const profile = {
   name: 'Shreyansh',
-  brandName: 'SHREYAN.SH',
+  brandName: 'Shreyansh',
   fullName: 'Shreyansh',
   role: 'Computer Science & Engineering Student',
   specialization: 'Cybersecurity',
-  university: 'VIT Chennai',
+  university: 'Vellore Institute of Technology (VIT), Chennai',
   graduationYear: 2030,
   location: 'India',
+  avatar: '/assets/profile.jpg',
+  avatarPlaceholder: '/assets/avatar-placeholder.svg',
 
   hero: {
     eyebrow: 'COMPUTER SCIENCE · CYBERSECURITY · ENGINEERING',
@@ -36,7 +38,7 @@ export const profile = {
   contact: {
     heading: 'Have something interesting in mind?',
     description: "Whether you want to discuss systems engineering, cybersecurity research, collaboration opportunities, or simply share ideas — my inbox is open.",
-    email: 'shreyanshmisra1027@gmail.com',
+    email: 'misrashreyansh6@gmail.com',
     github: 'https://github.com/shreyanshmisra1027',
     linkedin: 'https://www.linkedin.com/in/shreyansh-misra-0840323a1/',
   },

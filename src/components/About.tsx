@@ -1,4 +1,5 @@
 import './About.css';
+import Avatar from './Avatar';
 import { profile } from '../data/profile';
 
 export default function About() {
@@ -7,12 +8,17 @@ export default function About() {
       <div className="container">
         <h2 className="about-heading">A little about me.</h2>
 
-        <div className="about-content">
-          {profile.about.paragraphs.map((paragraph, index) => (
-            <p key={index} className="about-paragraph">
-              {paragraph}
-            </p>
-          ))}
+        <div className="about-content-wrapper">
+          <div className="about-avatar">
+            <Avatar size="large" />
+          </div>
+          <div className="about-content">
+            {profile.about.paragraphs.map((paragraph, index) => (
+              <p key={index} className="about-paragraph">
+                {paragraph}
+              </p>
+            ))}
+          </div>
         </div>
 
         <div className="about-philosophy">
