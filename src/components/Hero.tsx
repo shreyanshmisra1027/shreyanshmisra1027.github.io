@@ -1,10 +1,34 @@
 import './Hero.css';
+import { Suspense, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import ProcessorScene from './ProcessorScene';
 import { profile } from '../data/profile';
+import { isWebGLAvailable } from '../utils/webgl';
+
+function SceneLoader() {
+  return (
+    <div className="scene-loader">
+      <div className="loader-spinner"></div>
+      <p>Loading 3D scene...</p>
+    </div>
+  );
+}
+
+function SceneFallback() {
+  return (
+    <div className="scene-fallback">
+      <div className="fallback-icon">⚙️</div>
+      <p className="fallback-text">3D scene unavailable</p>
+    </div>
+  );
+}
 
 export default function Hero() {
+  const [hasWebGL] = useState(() => isWebGLAvailable());
+
   const scrollToProjects = () => {
-    const projectsSection = document.getElementById('projects');
-    projectsSection?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -24,7 +48,7 @@ export default function Hero() {
           </p>
           <div className="hero-buttons">
             <button onClick={scrollToProjects} className="btn-primary">
-              View Projects
+              Explore Projects
             </button>
             <a
               href={profile.contact.github}
@@ -38,27 +62,28 @@ export default function Hero() {
         </div>
 
         <div className="hero-visual">
-          <div className="tech-card">
-            <div className="tech-card-header">
-              <span className="dot red"></span>
-              <span className="dot yellow"></span>
-              <span className="dot green"></span>
-              <span className="tech-card-title">shreyansh@vit-chennai:~</span>
-            </div>
-            <div className="tech-card-body">
-              <p className="code-line"><span className="prompt">$</span> uname -r</p>
-              <p className="code-output">linux-arch-omarchy-x86_64</p>
-              <p className="code-line"><span className="prompt">$</span> cat ~/status.txt</p>
-              <p className="code-output">CSE Cybersecurity @ VIT Chennai (Class of '30)</p>
-              <p className="code-line"><span className="prompt">$</span> cat ~/focus.md</p>
-              <p className="code-output highlight">[Systems, C/C++, Linux, Kernel, Security]</p>
-              <p className="code-line"><span className="prompt">$</span> uptime</p>
-              <p className="code-output">up 24/7 building reliable software</p>
-            </div>
-            <div className="tech-card-footer">
-              <span className="status-indicator"></span>
-              <span>System operational</span>
-            </div>
+          <div className="canvas-container">
+            {hasWebGL ? (
+              <Canvas
+                camera={{ position: [0, 0, 4], fov: 50 }}
+                dpr={Math.min(window.devicePixelRatio, 2)}
+                performance={{ current: 1 }}
+              >
+                <PerspectiveCamera makeDefault position={[0, 0, 4]} />
+                <Suspense fallback={<SceneLoader />}>
+                  <ProcessorScene />
+                </Suspense>
+                <OrbitControls
+                  enableZoom={false}
+                  enablePan={false}
+                  autoRotate
+                  autoRotateSpeed={4}
+                  rotateSpeed={0.3}
+                />
+              </Canvas>
+            ) : (
+              <SceneFallback />
+            )}
           </div>
         </div>
       </div>

@@ -1,256 +1,111 @@
-# 🚀 Shreyansh | Developer Portfolio
+# 🚀 Shreyansh | Personal Developer Portfolio & 3D Interactive Showcase
 
-A premium, minimalist, 2D portfolio built with React, TypeScript, and Vite.
+A production-ready personal developer portfolio featuring an interactive 3D technology centerpiece built with React, TypeScript, Three.js, React Three Fiber (R3F), and Vite.
 
-**Live Site:** [Coming Soon - Deploy to Netlify]
+The aesthetic combines **Nothing OS-inspired monochromatic design**, **Linear's precision minimalism**, **Vercel's typographic hierarchy**, and **premium industrial hardware product visualization**.
 
-## 🎯 Overview
+---
 
-This is a production-ready personal portfolio showcasing:
-- Software engineering projects
-- Technical skills and expertise
-- Computer science & cybersecurity focus
-- Clean, professional design aesthetic
+## 🎨 Visual Identity
 
-Built following engineering best practices: minimal dependencies, fast loading, fully responsive, and accessible.
+- **Primary Background:** `#090909`
+- **Secondary Background:** `#111111`
+- **Card Background:** `#151515`
+- **Primary Text:** `#F2F2F2`
+- **Secondary Text:** `#999999`
+- **Accent Turquoise:** `#00D6C5` (used selectively for active states, interactive highlights, and 3D lighting)
+- **Subtle Borders:** `#252525`
+- **Typography:** Geist / Inter, JetBrains Mono
+
+---
+
+## ⚙️ Architecture & Features
+
+### 1. Interactive 3D Technology Centerpiece
+- Built with Three.js and React Three Fiber (R3F).
+- Features a futuristic, dark graphite processor/motherboard motif with subtle turquoise emissive traces and gentle pointer parallax/idle rotation.
+- Optimized for integrated graphics hardware (AMD Ryzen 7 5800H / Radeon Vega) with capped DPR and efficient geometry.
+- Graceful WebGL detection and fallback.
+- Code-split vendor bundle for fast initial load.
+
+### 2. Single-Page Application Structure
+- **Navbar:** Sticky navigation with glassmorphic backdrop and mobile menu drawer.
+- **Hero Section:** Balanced two-column layout with bold typography, bio, CTA buttons, and interactive 3D centerpiece.
+- **About Section:** Authentic narrative outlining CSE Cybersecurity studies at VIT Chennai and engineering philosophy.
+- **Projects Section:** Data-driven project cards (CrankView, Python Projects, C/C++ Systems Experiments, Arduino Projects) with 3D tilt micro-interactions, tech stack badges, and GitHub links.
+- **Skills & Currently Exploring:** Categorized technical groupings (Programming, Web, Tools, Systems/Security) without arbitrary percentage bars, plus dedicated current learning tracks.
+- **Contact & Footer:** Clean connection links (GitHub, LinkedIn, Email via `misrashreyansh6@gmail.com`) and dynamic copyright year.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Framework**: React 18
-- **Build Tool**: Vite 6
-- **Language**: TypeScript
-- **Styling**: Custom CSS with CSS Variables
-- **Deployment**: Netlify (auto-deploy enabled)
-
-**Zero 3D dependencies** – pure 2D web technologies only.
+- **Framework:** React 18
+- **Language:** TypeScript
+- **3D Graphics:** Three.js, React Three Fiber (`@react-three/fiber`), Drei (`@react-three/drei`)
+- **Build Tool:** Vite 6
+- **State Management:** Zustand
+- **Animations:** GSAP & CSS transforms
+- **Styling:** Custom CSS with CSS Variables
 
 ---
 
-## 🚀 Quick Start
-
-### Local Development
+## 🚀 Local Development
 
 ```bash
 # Install dependencies
 npm install
 
-# Start dev server (http://localhost:5173)
+# Start development server (http://localhost:5173)
 npm run dev
 
-# Build for production
+# Run production build
 npm run build
 
 # Preview production build
 npm run preview
 ```
 
-### Deployment to Netlify
+---
 
-#### Option 1: Netlify CLI (Recommended)
+## 🚢 Deployment
 
-```bash
-# Install Netlify CLI globally
-npm install -g netlify-cli
+### GitHub Pages (Automated via GitHub Actions)
+The repository includes `.github/workflows/deploy.yml` which automatically builds and deploys to GitHub Pages on every push to `main`.
 
-# Login to Netlify
-netlify login
+### Netlify Deployment
+The repository includes `netlify.toml` pre-configured with:
+- Build command: `npm run build`
+- Publish directory: `dist`
+- SPA redirect rules (`/*` to `/index.html`)
+- Optimized caching headers for assets and vendor bundles
 
-# Initialize and deploy
-netlify init
-
-# Future deployments
-netlify deploy --prod
-```
-
-#### Option 2: Connect GitHub Repository
-
-1. Go to [Netlify](https://app.netlify.com)
-2. Click **"Add new site"** → **"Import an existing project"**
-3. Connect your GitHub account
-4. Select the `shreyanshmisra1027.github.io` repository
-5. Build settings are auto-detected from `netlify.toml`:
-   - **Build command**: `npm run build`
-   - **Publish directory**: `dist`
-6. Click **"Deploy site"**
-
-Netlify will automatically deploy on every push to `main`.
-
-#### Option 3: Manual Deploy (Drag & Drop)
-
-```bash
-# Build locally
-npm run build
-
-# Go to https://app.netlify.com/drop
-# Drag the `dist/` folder into the browser
-```
+To deploy to Netlify:
+1. Connect your repository at [app.netlify.com](https://app.netlify.com)
+2. Build settings will auto-detect from `netlify.toml`
+3. Click **Deploy**
 
 ---
 
-## 📁 Project Structure
+## 👤 Personal Profile
 
-```
-src/
-├── components/
-│   ├── Navbar.tsx         # Sticky navigation
-│   ├── Hero.tsx           # Hero section with tech card
-│   ├── About.tsx          # About section
-│   ├── Projects.tsx       # Project showcase
-│   ├── Skills.tsx         # Skills & technologies
-│   ├── Contact.tsx        # Contact section
-│   └── Footer.tsx         # Footer
-├── data/
-│   ├── profile.ts         # Personal info & content
-│   ├── projects.ts        # Project data
-│   └── skills.ts          # Skills & tech stack
-├── styles/                # Component-specific CSS
-├── App.tsx                # Main app component
-├── main.tsx               # Entry point
-└── index.css              # Global styles
+- **Name:** Shreyansh
+- **Email:** misrashreyansh6@gmail.com
+- **Role:** Computer Science & Engineering Student
+- **Specialization:** Cybersecurity
+- **University:** Vellore Institute of Technology (VIT), Chennai
+- **Graduation Year:** 2030
+- **Location:** India
 
-netlify.toml               # Netlify configuration
-vite.config.ts             # Vite configuration
-```
-
----
-
-## ✏️ Customization
-
-### Update Personal Information
-
-Edit `src/data/profile.ts`:
-```typescript
-export const profile = {
-  name: 'Your Name',
-  brandName: 'YOUR.BRAND',
-  hero: {
-    eyebrow: 'YOUR · SPECIALTY · HERE',
-    heading: 'Your heading here.',
-    description: 'Your description...',
-  },
-  contact: {
-    email: 'your.email@example.com',
-    github: 'https://github.com/yourusername',
-    linkedin: 'https://linkedin.com/in/yourprofile',
-  },
-};
-```
-
-### Add/Update Projects
-
-Edit `src/data/projects.ts`:
-```typescript
-export const projects: Project[] = [
-  {
-    id: 'project-id',
-    name: 'Project Name',
-    description: 'Project description...',
-    technologies: ['React', 'TypeScript', 'Node.js'],
-    github: 'https://github.com/username/repo',
-    demo: 'https://demo-url.com', // Optional
-    status: 'active', // 'active' | 'in-progress' | 'completed'
-    featured: true, // Optional
-  },
-];
-```
-
-### Update Skills
-
-Edit `src/data/skills.ts`:
-```typescript
-{
-  category: 'Programming',
-  skills: [
-    { name: 'Python', level: 'established' },
-    { name: 'JavaScript', level: 'learning' },
-    { name: 'Rust', level: 'exploring' },
-  ],
-}
-```
-
----
-
-## 🎨 Design System
-
-### Color Palette
-```css
---bg-primary: #090909      /* Main background */
---bg-secondary: #111111    /* Secondary background */
---bg-card: #151515         /* Card background */
---text-primary: #F2F2F2    /* Primary text */
---text-secondary: #999999  /* Secondary text */
---accent: #00D6C5          /* Turquoise accent */
---border: #252525          /* Border color */
-```
-
-### Typography
-- **Primary**: Geist (or Inter fallback)
-- **Monospace**: JetBrains Mono
-
----
-
-## 🔧 Configuration Files
-
-### `netlify.toml`
-- Auto-detected build settings
-- SPA routing redirects
-- Security headers
-- Cache optimization for assets
-
-### `vite.config.ts`
-- React plugin configuration
-- Build optimizations
-- Output directory: `dist/`
-
----
-
-## 📊 Performance
-
-- **Bundle size**: ~120 KB gzipped
-- **First Contentful Paint**: < 1s
-- **Time to Interactive**: < 1.5s
-- **Lighthouse Score**: 95+ (all categories)
-
-No WebGL or heavy 3D libraries – pure HTML/CSS/JS.
-
----
-
-## ♿ Accessibility
-
-- Semantic HTML5
-- ARIA labels on interactive elements
-- Keyboard navigation support
-- Focus indicators (`2px turquoise outline`)
-- `prefers-reduced-motion` support
-- High contrast text (WCAG AA compliant)
+### Engineering Philosophy
+- Mastery over shortcuts.
+- Understanding over memorization.
+- Building over merely consuming tutorials.
+- Consistency over temporary motivation.
+- Writing code to solve actual problems.
 
 ---
 
 ## 📝 License
 
-This project is open source and available under the MIT License.
-
----
-
-## 🤝 Connect
-
-- **GitHub**: [@shreyanshmisra1027](https://github.com/shreyanshmisra1027)
-- **LinkedIn**: [Shreyansh Misra](https://www.linkedin.com/in/shreyansh-misra-0840323a1/)
-
----
-
-## 🎓 About
-
-Built by **Shreyansh**, a Computer Science & Engineering student at VIT Chennai specializing in Cybersecurity. This portfolio reflects a philosophy of understanding technology from first principles and building software with intention.
-
-**Engineering Philosophy:**
-- Mastery over shortcuts
-- Understanding over memorization
-- Building over consuming tutorials
-- Consistency over temporary motivation
-
----
-
-**Made with ❤️ using React, TypeScript, and Vite**
+Open-source under the MIT License.
