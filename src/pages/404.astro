@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ArrowLeft, Search } from 'lucide-astro';
+---
+
+<BaseLayout title="Page Not Found" description="The requested technical reference could not be found.">
+  <div class="notfound-container">
+    <div class="notfound-card">
+      <span class="error-code">404</span>
+      <h1 class="notfound-title">Reference Not Found</h1>
+      <p class="notfound-desc">
+        The cheatsheet or reference page you requested does not exist or may have been relocated.
+      </p>
+
+      <div class="notfound-actions">
+        <a href="/" class="action-btn primary-btn">
+          <ArrowLeft size={16} />
+          <span>Back to Library</span>
+        </a>
+        <button id="notfound-search-btn" class="action-btn secondary-btn">
+          <Search size={16} />
+          <span>Search References (⌘K)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .notfound-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+  }
+
+  .notfound-card {
+    max-width: 520px;
+    text-align: center;
+    padding: 3rem 2rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .error-code {
+    font-family: var(--font-mono);
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: -0.05em;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .notfound-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  .notfound-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .notfound-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .primary-btn {
+    background-color: var(--accent);
+    color: var(--background);
+    border: 1px solid var(--accent);
+  }
+
+  .primary-btn:hover {
+    background-color: var(--accent-subtle);
+    color: var(--text-primary);
+  }
+
+  .secondary-btn {
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .secondary-btn:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+</style>
+
+<script>
+  const searchBtn = document.getElementById('notfound-search-btn');
+  searchBtn?.addEventListener('click', () => {
+    const dialog = document.getElementById('search-dialog');
+    if (dialog) {
+      dialog.dispatchEvent(new CustomEvent('open-search'));
+    }
+  });
+</script>

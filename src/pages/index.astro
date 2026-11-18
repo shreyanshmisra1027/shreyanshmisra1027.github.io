@@ -1,0 +1,391 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import CheatsheetCard from '../components/CheatsheetCard.astro';
+import { getCollection } from 'astro:content';
+import { Search, Terminal, Zap, BookOpen, Layers } from 'lucide-astro';
+
+const allCheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
+
+// Calculate counts per category dynamically
+const categoryList = [
+  {
+    id: 'programming',
+    title: 'Programming Languages',
+    description: 'Core syntax, data types, functions, OOP, and standard libraries for Python, C++, Java, and more.',
+  },
+  {
+    id: 'dsa',
+    title: 'Data Structures & Algorithms',
+    description: 'Complexity analysis, linear & non-linear structures, two-pointers, sliding window, and graph traversals.',
+  },
+  {
+    id: 'tools',
+    title: 'Developer Tools & Git',
+    description: 'Essential Git branching, merging, rebasing, Linux command line, permissions, and editor shortcuts.',
+  },
+  {
+    id: 'databases',
+    title: 'Databases & SQL',
+    description: 'Relational queries, joins, subqueries, indexing, transactions, and PostgreSQL performance.',
+  },
+  {
+    id: 'computer-science',
+    title: 'Computer Science Fundamentals',
+    description: 'Operating systems, threads, process scheduling, networking layers, TCP/IP, and HTTP status codes.',
+  },
+  {
+    id: 'cybersecurity',
+    title: 'Cybersecurity References',
+    description: 'Cryptography, hashing vs encryption, authentication, OWASP vulnerabilities, and authorized lab tools.',
+  },
+];
+
+const categoryCounts = categoryList.map((cat) => ({
+  ...cat,
+  count: allCheatsheets.filter((c) => c.data.category === cat.id).length,
+}));
+
+// Featured cheatsheets
+const featuredCheatsheets = allCheatsheets
+  .filter((c) => c.data.featured)
+  .slice(0, 6);
+
+// Recently added / updated
+const recentlyUpdated = [...allCheatsheets]
+  .sort((a, b) => {
+    const dateA = new Date(a.data.dateUpdated || a.data.dateCreated || 0).getTime();
+    const dateB = new Date(b.data.dateUpdated || b.data.dateCreated || 0).getTime();
+    return dateB - dateA;
+  })
+  .slice(0, 6);
+---
+
+<BaseLayout title="Developer Cheatsheets & Technical Reference Platform">
+  <div class="homepage">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container hero-inner">
+        <div class="hero-badge">
+          <Terminal size={14} />
+          <span>TECHNICAL CHEATSHEETS & REFERENCES</span>
+        </div>
+        <h1 class="hero-title">Your technical knowledge,<br />one reference away.</h1>
+        <p class="hero-description">
+          A focused, high-performance library of programming cheatsheets, developer tooling,
+          computer science fundamentals and practical code references. Meticulously organized. Zero clutter.
+        </p>
+
+        <!-- Prominent Search Trigger -->
+        <div class="hero-search-wrapper">
+          <button id="hero-search-trigger" class="hero-search-btn" aria-label="Search all cheatsheets">
+            <Search size={18} class="search-btn-icon" />
+            <span class="search-btn-text">Search syntax, algorithms, commands...</span>
+            <kbd class="hero-kbd"><span class="cmd-symbol">⌘</span>K</kbd>
+          </button>
+        </div>
+
+        <!-- Quick Access Shortcuts -->
+        <div class="quick-access-strip">
+          <span class="quick-label">Popular references:</span>
+          <a href="/cheatsheets/programming/python-fundamentals/" class="quick-link">Python Basics</a>
+          <a href="/cheatsheets/programming/cpp-stl-containers/" class="quick-link">C++ STL</a>
+          <a href="/cheatsheets/tools/git-commands/" class="quick-link">Git Commands</a>
+          <a href="/cheatsheets/tools/linux-file-permissions/" class="quick-link">Linux Permissions</a>
+          <a href="/cheatsheets/databases/sql-joins/" class="quick-link">SQL Joins</a>
+          <a href="/cheatsheets/dsa/big-o-notation/" class="quick-link">Big O</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Browse Categories -->
+    <section class="categories-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">
+            <Layers size={14} />
+            <span>KNOWLEDGE DOMAINS</span>
+          </div>
+          <h2 class="section-title">Browse by Category</h2>
+          <p class="section-subtitle">Structured reference collections across engineering disciplines.</p>
+        </div>
+
+        <div class="categories-grid">
+          {
+            categoryCounts.map((cat) => (
+              <CategoryCard
+                id={cat.id}
+                title={cat.title}
+                description={cat.description}
+                count={cat.count}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Cheatsheets -->
+    {
+      featuredCheatsheets.length > 0 && (
+        <section class="featured-section">
+          <div class="container">
+            <div class="section-header">
+              <div class="section-label">
+                <Zap size={14} />
+                <span>CURATED REFERENCES</span>
+              </div>
+              <h2 class="section-title">Featured Cheatsheets</h2>
+              <p class="section-subtitle">Core references used frequently in day-to-day software engineering.</p>
+            </div>
+
+            <div class="cheatsheets-grid">
+              {featuredCheatsheets.map((item) => (
+                <CheatsheetCard
+                  title={item.data.title}
+                  description={item.data.description}
+                  category={item.data.category}
+                  subcategory={item.data.subcategory}
+                  slug={item.slug}
+                  difficulty={item.data.difficulty}
+                  tags={item.data.tags}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- Recently Updated -->
+    <section class="recent-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-label">
+            <BookOpen size={14} />
+            <span>LATEST ADDITIONS</span>
+          </div>
+          <h2 class="section-title">Recently Updated</h2>
+          <p class="section-subtitle">The latest cheatsheets added or refined in the CODEDEX library.</p>
+        </div>
+
+        <div class="cheatsheets-grid">
+          {recentlyUpdated.map((item) => (
+            <CheatsheetCard
+              title={item.data.title}
+              description={item.data.description}
+              category={item.data.category}
+              subcategory={item.data.subcategory}
+              slug={item.slug}
+              difficulty={item.data.difficulty}
+              tags={item.data.tags}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero-section {
+    padding: 5rem 0 4rem 0;
+    border-bottom: 1px solid var(--border);
+    background: radial-gradient(circle at 50% 0%, var(--surface-elevated) 0%, var(--background) 75%);
+  }
+
+  .hero-inner {
+    max-width: 840px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 3.25rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.04em;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-description {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2.25rem;
+    max-width: 680px;
+  }
+
+  .hero-search-wrapper {
+    width: 100%;
+    max-width: 580px;
+    margin-bottom: 2rem;
+  }
+
+  .hero-search-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    transition: all var(--transition);
+  }
+
+  .hero-search-btn:hover {
+    border-color: var(--text-muted);
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+  }
+
+  .search-btn-icon {
+    color: var(--text-muted);
+    margin-right: 0.75rem;
+  }
+
+  .search-btn-text {
+    flex: 1;
+    text-align: left;
+  }
+
+  .hero-kbd {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
+  .quick-access-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .quick-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .quick-link {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    transition: all var(--transition);
+  }
+
+  .quick-link:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+    background-color: var(--surface-hover);
+  }
+
+  /* Section general styling */
+  .categories-section,
+  .featured-section,
+  .recent-section {
+    padding: 4.5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.35rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .cheatsheets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.25rem;
+    }
+    .hero-section {
+      padding: 3rem 0;
+    }
+    .categories-grid,
+    .cheatsheets-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Connect hero search button to dialog
+  const heroBtn = document.getElementById('hero-search-trigger');
+  heroBtn?.addEventListener('click', () => {
+    const searchDialog = document.getElementById('search-dialog');
+    if (searchDialog) {
+      searchDialog.dispatchEvent(new CustomEvent('open-search'));
+    }
+  });
+</script>

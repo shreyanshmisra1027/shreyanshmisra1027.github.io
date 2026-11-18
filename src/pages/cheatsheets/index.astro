@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CheatsheetCard from '../../components/CheatsheetCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getCollection } from 'astro:content';
+import { BookOpen, Filter } from 'lucide-astro';
+
+const allCheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
+allCheatsheets.sort((a, b) => (a.data.order || 99) - (b.data.order || 99) || a.data.title.localeCompare(b.data.title));
+
+const categories = [
+  { id: 'all', label: 'All References' },
+  { id: 'programming', label: 'Programming' },
+  { id: 'dsa', label: 'DSA' },
+  { id: 'tools', label: 'Tools' },
+  { id: 'databases', label: 'Databases' },
+  { id: 'computer-science', label: 'Computer Science' },
+  { id: 'cybersecurity', label: 'Cybersecurity' },
+];
+
+const breadcrumbItems = [{ label: 'Cheatsheets' }];
+---
+
+<BaseLayout title="All Cheatsheets & Technical References" description="Explore the complete CODEDEX library of programming cheatsheets, algorithms, Git commands, databases, and computer science fundamentals.">
+  <div class="directory-page">
+    <div class="container directory-inner">
+      <Breadcrumbs items={breadcrumbItems} />
+
+      <header class="directory-header">
+        <div class="header-badge">
+          <BookOpen size={14} />
+          <span>LIBRARY DIRECTORY</span>
+        </div>
+        <h1 class="directory-title">All Cheatsheets</h1>
+        <p class="directory-subtitle">
+          Browse all published technical references. Filter by domain or search for specific concepts.
+        </p>
+      </header>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-strip" aria-label="Filter cheatsheets by category">
+        <div class="filter-label">
+          <Filter size={14} />
+          <span>Filter:</span>
+        </div>
+        <div class="filter-pills">
+          {
+            categories.map((cat) => (
+              <button
+                class={`filter-pill ${cat.id === 'all' ? 'active' : ''}`}
+                data-category={cat.id}
+              >
+                {cat.label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Cheatsheets Grid -->
+      <div id="directory-grid" class="cheatsheets-grid">
+        {
+          allCheatsheets.map((item) => (
+            <div class="directory-item" data-category={item.data.category}>
+              <CheatsheetCard
+                title={item.data.title}
+                description={item.data.description}
+                category={item.data.category}
+                subcategory={item.data.subcategory}
+                slug={item.slug}
+                difficulty={item.data.difficulty}
+                tags={item.data.tags}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .directory-page {
+    padding: 3rem 0 5rem 0;
+  }
+
+  .directory-inner {
+    max-width: 1280px;
+  }
+
+  .directory-header {
+    margin-bottom: 2rem;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .directory-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+
+  .directory-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+  }
+
+  .filter-strip {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .filter-pills {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-pill {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 0.35rem 0.85rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .filter-pill:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+  .filter-pill.active {
+    background-color: var(--accent);
+    color: var(--background);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .cheatsheets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .directory-title {
+      font-size: 2rem;
+    }
+    .filter-strip {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<script>
+  function setupCategoryFiltering() {
+    const pills = document.querySelectorAll('.filter-pill');
+    const items = document.querySelectorAll('.directory-item');
+
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        pills.forEach((p) => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        const selectedCat = pill.getAttribute('data-category');
+
+        items.forEach((item) => {
+          const itemCat = item.getAttribute('data-category');
+          if (selectedCat === 'all' || itemCat === selectedCat) {
+            (item as HTMLElement).style.display = 'block';
+          } else {
+            (item as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  setupCategoryFiltering();
+  document.addEventListener('astro:after-swap', setupCategoryFiltering);
+</script>

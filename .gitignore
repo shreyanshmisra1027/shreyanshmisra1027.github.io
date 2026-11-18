@@ -47,7 +47,6 @@ backup/
 # Old static files
 script.js
 style.css
-pages/
 
 # Local Netlify folder
 .netlify

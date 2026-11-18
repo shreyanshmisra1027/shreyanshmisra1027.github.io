@@ -1,0 +1,208 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { History, Trash2 } from 'lucide-astro';
+
+const breadcrumbItems = [{ label: 'Recently Viewed' }];
+---
+
+<BaseLayout title="Recently Viewed References" description="Track the cheatsheets you have opened recently in your current browser session.">
+  <div class="recent-page">
+    <div class="container recent-inner">
+      <Breadcrumbs items={breadcrumbItems} />
+
+      <header class="page-header">
+        <div class="header-badge">
+          <History size={14} />
+          <span>BROWSING HISTORY</span>
+        </div>
+        <div class="header-title-row">
+          <div>
+            <h1 class="page-title">Recently Viewed</h1>
+            <p class="page-subtitle">Your recently opened technical references. Stored locally on this device.</p>
+          </div>
+          <button id="clear-history-btn" class="clear-btn" aria-label="Clear browsing history">
+            <Trash2 size={16} />
+            <span>Clear History</span>
+          </button>
+        </div>
+      </header>
+
+      <div id="recent-container" class="recent-list">
+        <!-- Rendered via Client JavaScript -->
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .recent-page {
+    padding: 3rem 0 5rem 0;
+  }
+
+  .recent-inner {
+    max-width: 900px;
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .header-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .page-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.35rem;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .clear-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 0.825rem;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .clear-btn:hover {
+    background-color: var(--surface-hover);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+
+  .recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  :global(.recent-item) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition);
+  }
+
+  :global(.recent-item:hover) {
+    background-color: var(--surface-hover);
+    border-color: var(--text-muted);
+  }
+
+  :global(.recent-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  :global(.recent-title) {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  :global(.recent-category) {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  :global(.recent-empty) {
+    padding: 4rem 2rem;
+    text-align: center;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+  }
+</style>
+
+<script>
+  function renderRecentlyViewed() {
+    const container = document.getElementById('recent-container');
+    const clearBtn = document.getElementById('clear-history-btn');
+    const STORAGE_KEY = 'codedex-recently-viewed';
+
+    if (!container) return;
+
+    let items = [];
+    try {
+      items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch {
+      items = [];
+    }
+
+    if (items.length === 0) {
+      if (clearBtn) clearBtn.style.display = 'none';
+      container.innerHTML = `
+        <div class="recent-empty">
+          <p>No recently viewed references yet.</p>
+          <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+            Pages you open will automatically appear here for easy retracing.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    if (clearBtn) clearBtn.style.display = 'inline-flex';
+
+    container.innerHTML = items.map((item: any) => `
+      <a href="${item.url}" class="recent-item">
+        <div class="recent-info">
+          <span class="recent-category">${item.category}</span>
+          <span class="recent-title">${item.title}</span>
+        </div>
+      </a>
+    `).join('');
+
+    clearBtn?.addEventListener('click', () => {
+      if (confirm('Clear browsing history?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderRecentlyViewed();
+      }
+    });
+  }
+
+  renderRecentlyViewed();
+  document.addEventListener('astro:after-swap', renderRecentlyViewed);
+</script>

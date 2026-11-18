@@ -1,0 +1,120 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getCollection } from 'astro:content';
+import { Layers } from 'lucide-astro';
+
+const allCheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
+
+const categories = [
+  {
+    id: 'programming',
+    title: 'Programming Languages',
+    description: 'Practical syntax, memory management, OOP principles, and standard libraries for Python, C++, Java, and JavaScript.',
+  },
+  {
+    id: 'dsa',
+    title: 'Data Structures & Algorithms',
+    description: 'Big O complexity, linear and tree structures, two pointers, sliding window, and graph traversals.',
+  },
+  {
+    id: 'tools',
+    title: 'Developer Tools & Git',
+    description: 'Git branching, rebasing, remote repository flows, Linux command line mastery, and environment management.',
+  },
+  {
+    id: 'databases',
+    title: 'Databases & SQL',
+    description: 'Relational database queries, joins, window functions, indexing strategies, and PostgreSQL specifics.',
+  },
+  {
+    id: 'computer-science',
+    title: 'Computer Science Fundamentals',
+    description: 'Operating system processes and threads, memory hierarchy, scheduling, TCP/IP, and networking protocols.',
+  },
+  {
+    id: 'cybersecurity',
+    title: 'Cybersecurity References',
+    description: 'Defensive principles, cryptography, hashing vs encryption, authentication mechanisms, and OWASP web vulnerabilities.',
+  },
+];
+
+const categoryData = categories.map((cat) => ({
+  ...cat,
+  count: allCheatsheets.filter((c) => c.data.category === cat.id).length,
+}));
+
+const breadcrumbItems = [{ label: 'Categories' }];
+---
+
+<BaseLayout title="Categories Taxonomy" description="Explore technical reference documentation grouped by computer science and engineering disciplines.">
+  <div class="categories-page">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbItems} />
+
+      <header class="page-header">
+        <div class="header-badge">
+          <Layers size={14} />
+          <span>KNOWLEDGE TAXONOMY</span>
+        </div>
+        <h1 class="page-title">Categories</h1>
+        <p class="page-subtitle">
+          Structured reference collections across foundational software engineering disciplines.
+        </p>
+      </header>
+
+      <div class="categories-grid">
+        {categoryData.map((cat) => (
+          <CategoryCard
+            id={cat.id}
+            title={cat.title}
+            description={cat.description}
+            count={cat.count}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .categories-page {
+    padding: 3rem 0 5rem 0;
+  }
+
+  .page-header {
+    margin-bottom: 3rem;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

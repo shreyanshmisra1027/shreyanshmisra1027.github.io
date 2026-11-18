@@ -1,0 +1,206 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { Terminal, Shield, Zap, Cpu, BookOpen, Github } from 'lucide-astro';
+
+const breadcrumbItems = [{ label: 'About' }];
+---
+
+<BaseLayout title="About CODEDEX" description="CODEDEX is a high-performance, meticulously organized developer reference platform.">
+  <div class="about-page">
+    <div class="container about-inner">
+      <Breadcrumbs items={breadcrumbItems} />
+
+      <header class="about-header">
+        <div class="header-badge">
+          <Terminal size={14} />
+          <span>PROJECT PHILOSOPHY</span>
+        </div>
+        <h1 class="about-title">About CODEDEX</h1>
+        <p class="about-subtitle">Everything you need. Nothing you don't.</p>
+      </header>
+
+      <section class="about-content">
+        <div class="about-section">
+          <h2>Core Mission</h2>
+          <p>
+            CODEDEX is an open-source, long-term personal developer knowledge platform. It was engineered to solve a common developer friction: retrieving concise, accurate syntax, algorithms, commands, and architectural concepts without wading through verbose tutorials, ad-heavy content farms, or fragmented search results.
+          </p>
+        </div>
+
+        <div class="principles-grid">
+          <div class="principle-card">
+            <Zap size={20} class="principle-icon" />
+            <h3>Speed & Precision</h3>
+            <p>Every reference is structured for rapid retrieval: syntax first, working example next, followed by caveats and complexity.</p>
+          </div>
+          <div class="principle-card">
+            <Cpu size={20} class="principle-icon" />
+            <h3>Zero Runtime Overhead</h3>
+            <p>Statically generated with Astro. No runtime database, no tracking cookies, no server latency. 100% static assets.</p>
+          </div>
+          <div class="principle-card">
+            <Shield size={20} class="principle-icon" />
+            <h3>Browser-Local Privacy</h3>
+            <p>Theme preferences, saved bookmarks, and recently viewed logs are stored strictly in your browser's localStorage.</p>
+          </div>
+          <div class="principle-card">
+            <BookOpen size={20} class="principle-icon" />
+            <h3>Technical Depth</h3>
+            <p>40+ thoroughly written cheatsheets across systems, algorithms, databases, tooling, and cybersecurity.</p>
+          </div>
+        </div>
+
+        <div class="about-section">
+          <h2>Architecture & Stack</h2>
+          <ul>
+            <li><strong>Engine:</strong> Astro (Static Site Generation).</li>
+            <li><strong>Type Safety:</strong> TypeScript with strict Zod content collection schema validation.</li>
+            <li><strong>Search:</strong> Pagefind static client-side indexing.</li>
+            <li><strong>Syntax Highlighting:</strong> Shiki with custom styling.</li>
+            <li><strong>Typography:</strong> Inter & JetBrains Mono.</li>
+            <li><strong>Deployment:</strong> GitHub Pages with GitHub Actions CI/CD.</li>
+          </ul>
+        </div>
+
+        <div class="about-section">
+          <h2>Open Source & Contributions</h2>
+          <p>
+            CODEDEX is designed to be easily extensible. New cheatsheets can be added simply by creating a validated Markdown file in the content directory.
+          </p>
+          <div class="about-actions">
+            <a href="https://github.com/shreyanshmisra1027/shreyanshmisra1027.github.io" target="_blank" rel="noopener noreferrer" class="github-action-btn">
+              <Github size={18} />
+              <span>Explore GitHub Repository</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page {
+    padding: 3rem 0 5rem 0;
+  }
+
+  .about-inner {
+    max-width: 840px;
+  }
+
+  .about-header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .about-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.35rem;
+  }
+
+  .about-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+  }
+
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .about-section p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .about-section ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .principle-card {
+    padding: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .principle-icon {
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  .principle-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+  }
+
+  .principle-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .about-actions {
+    margin-top: 1.5rem;
+  }
+
+  .github-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1.25rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all var(--transition);
+  }
+
+  .github-action-btn:hover {
+    background-color: var(--surface-hover);
+    border-color: var(--text-muted);
+  }
+</style>

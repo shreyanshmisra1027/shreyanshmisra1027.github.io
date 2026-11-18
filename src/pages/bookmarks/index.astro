@@ -1,0 +1,245 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { Bookmark, Trash2 } from 'lucide-astro';
+
+const breadcrumbItems = [{ label: 'Bookmarks' }];
+---
+
+<BaseLayout title="Saved Bookmarks" description="Access your bookmarked cheatsheets stored locally in your browser.">
+  <div class="bookmarks-page">
+    <div class="container bookmarks-inner">
+      <Breadcrumbs items={breadcrumbItems} />
+
+      <header class="page-header">
+        <div class="header-badge">
+          <Bookmark size={14} />
+          <span>LOCAL STORAGE</span>
+        </div>
+        <div class="header-title-row">
+          <div>
+            <h1 class="page-title">Saved Bookmarks</h1>
+            <p class="page-subtitle">Quick access to your saved references. Stored privately in your browser.</p>
+          </div>
+          <button id="clear-bookmarks-btn" class="clear-btn" aria-label="Clear all bookmarks">
+            <Trash2 size={16} />
+            <span>Clear All</span>
+          </button>
+        </div>
+      </header>
+
+      <div id="bookmarks-container" class="bookmarks-list">
+        <!-- Rendered via Client JavaScript -->
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .bookmarks-page {
+    padding: 3rem 0 5rem 0;
+  }
+
+  .bookmarks-inner {
+    max-width: 900px;
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .header-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .page-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.35rem;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .clear-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 0.825rem;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .clear-btn:hover {
+    background-color: var(--surface-hover);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.4);
+  }
+
+  .bookmarks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  :global(.bookmark-item) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition);
+  }
+
+  :global(.bookmark-item:hover) {
+    background-color: var(--surface-hover);
+    border-color: var(--text-muted);
+  }
+
+  :global(.bookmark-info) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  :global(.bookmark-title) {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  :global(.bookmark-category) {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  :global(.bookmark-actions) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  :global(.remove-bookmark-btn) {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: color var(--transition);
+  }
+
+  :global(.remove-bookmark-btn:hover) {
+    color: #f87171;
+  }
+
+  :global(.bookmarks-empty) {
+    padding: 4rem 2rem;
+    text-align: center;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+  }
+</style>
+
+<script>
+  function renderBookmarks() {
+    const container = document.getElementById('bookmarks-container');
+    const clearBtn = document.getElementById('clear-bookmarks-btn');
+    const STORAGE_KEY = 'codedex-bookmarks';
+
+    if (!container) return;
+
+    let bookmarks = [];
+    try {
+      bookmarks = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    } catch {
+      bookmarks = [];
+    }
+
+    if (bookmarks.length === 0) {
+      if (clearBtn) clearBtn.style.display = 'none';
+      container.innerHTML = `
+        <div class="bookmarks-empty">
+          <p>You have no saved bookmarks yet.</p>
+          <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+            Click the "Bookmark" button on any cheatsheet to save it here for fast retrieval.
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    if (clearBtn) clearBtn.style.display = 'inline-flex';
+
+    container.innerHTML = bookmarks.map((b: any, idx: number) => `
+      <div class="bookmark-item">
+        <a href="${b.url}" class="bookmark-info" style="flex: 1;">
+          <span class="bookmark-category">${b.category}</span>
+          <span class="bookmark-title">${b.title}</span>
+        </a>
+        <div class="bookmark-actions">
+          <button class="remove-bookmark-btn" data-slug="${b.slug}" aria-label="Remove bookmark">
+            ✕
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.remove-bookmark-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const slug = btn.getAttribute('data-slug');
+        bookmarks = bookmarks.filter((b: any) => b.slug !== slug);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+        renderBookmarks();
+      });
+    });
+
+    clearBtn?.addEventListener('click', () => {
+      if (confirm('Clear all saved bookmarks?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderBookmarks();
+      }
+    });
+  }
+
+  renderBookmarks();
+  document.addEventListener('astro:after-swap', renderBookmarks);
+</script>

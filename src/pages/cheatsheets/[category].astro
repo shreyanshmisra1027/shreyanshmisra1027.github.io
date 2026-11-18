@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CheatsheetCard from '../../components/CheatsheetCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getCollection } from 'astro:content';
+import { Layers } from 'lucide-astro';
+
+export async function getStaticPaths() {
+  const categories = [
+    'programming',
+    'dsa',
+    'tools',
+    'databases',
+    'computer-science',
+    'cybersecurity',
+    'web',
+    'math',
+  ];
+
+  return categories.map((cat) => ({
+    params: { category: cat },
+  }));
+}
+
+const { category } = Astro.params;
+const allCheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft && data.category === category);
+allCheatsheets.sort((a, b) => (a.data.order || 99) - (b.data.order || 99) || a.data.title.localeCompare(b.data.title));
+
+const categoryLabels: Record<string, { title: string; description: string }> = {
+  programming: {
+    title: 'Programming Languages References',
+    description: 'Practical syntax, memory management, OOP principles, and standard libraries for Python, C++, Java, and JavaScript.',
+  },
+  dsa: {
+    title: 'Data Structures & Algorithms',
+    description: 'Big O complexity, linear and tree structures, two pointers, sliding window, and graph traversals.',
+  },
+  tools: {
+    title: 'Developer Tools & Git',
+    description: 'Git branching, rebasing, remote repository flows, Linux command line mastery, and environment management.',
+  },
+  databases: {
+    title: 'Databases & SQL References',
+    description: 'Relational database queries, joins, window functions, indexing strategies, and PostgreSQL specifics.',
+  },
+  'computer-science': {
+    title: 'Computer Science Fundamentals',
+    description: 'Operating system processes and threads, memory hierarchy, scheduling, TCP/IP, and networking protocols.',
+  },
+  cybersecurity: {
+    title: 'Cybersecurity References',
+    description: 'Defensive principles, cryptography, hashing vs encryption, authentication mechanisms, and OWASP web vulnerabilities.',
+  },
+  web: {
+    title: 'Web Development References',
+    description: 'Modern HTML, CSS flexbox & grid, DOM APIs, HTTP protocols, and frontend architectural patterns.',
+  },
+  math:
+    { title: 'Mathematics & Engineering', description: 'Binary arithmetic, set theory, discrete mathematics, logic, probability, and statistics for computer scientists.' },
+};
+
+const meta = categoryLabels[category] || {
+  title: `${category.toUpperCase()} References`,
+  description: `Technical reference guides and cheatsheets for ${category}.`,
+};
+
+const breadcrumbItems = [
+  { label: 'Cheatsheets', href: '/cheatsheets/' },
+  { label: meta.title },
+];
+---
+
+<BaseLayout title={meta.title} description={meta.description}>
+  <div class="categories-page">
+    <div class="container categories-inner">
+      <Breadcrumbs items={breadcrumbItems} />
+
+      <header class="page-header">
+        <div class="header-badge">
+          <Layers size={14} />
+          <span>{category.toUpperCase()}</span>
+        </div>
+        <h1 class="page-title">{meta.title}</h1>
+        <p class="page-subtitle">{meta.description}</p>
+      </header>
+
+      {allCheatsheets.length > 0 ? (
+        <div class="cheatsheets-grid">
+          {allCheatsheets.map((item) => (
+            <CheatsheetCard
+              title={item.data.title}
+              description={item.data.description}
+              category={item.data.category}
+              subcategory={item.data.subcategory}
+              slug={item.slug}
+              difficulty={item.data.difficulty}
+              tags={item.data.tags}
+            />
+          ))}
+        </div>
+      ) : (
+        <div class="empty-category">
+          <p>No cheatsheets published yet in this category. Check back soon!</p>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .categories-page {
+    padding: 3rem 0 5rem 0;
+  }
+
+  .categories-inner {
+    max-width: 1280px;
+  }
+
+  .page-header {
+    margin-bottom: 3rem;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+  }
+
+  .cheatsheets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .empty-category {
+    padding: 4rem 2rem;
+    text-align: center;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+  }
+</style>
