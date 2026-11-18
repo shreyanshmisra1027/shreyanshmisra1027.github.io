@@ -1,0 +1,98 @@
+---
+import { ArrowRight } from 'lucide-astro';
+
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  count: number;
+}
+
+const { id, title, description, count } = Astro.props;
+const href = `/cheatsheets/${id}/`;
+---
+
+<a href={href} class="category-card">
+  <div class="category-header">
+    <div class="category-badge">
+      <span class="count-number">{count}</span>
+      <span class="count-label">references</span>
+    </div>
+    <ArrowRight size={16} class="category-arrow" />
+  </div>
+
+  <h3 class="category-title">{title}</h3>
+  <p class="category-description">{description}</p>
+</a>
+
+<style>
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: all var(--transition);
+  }
+
+  .category-card:hover {
+    background-color: var(--surface-hover);
+    border-color: var(--text-muted);
+    transform: translateY(-2px);
+  }
+
+  .category-card:hover .category-arrow {
+    transform: translateX(4px);
+    color: var(--text-primary);
+  }
+
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+
+  .count-number {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .count-label {
+    color: var(--text-muted);
+  }
+
+  .category-arrow {
+    color: var(--text-muted);
+    transition: transform var(--transition), color var(--transition);
+  }
+
+  .category-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .category-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+</style>

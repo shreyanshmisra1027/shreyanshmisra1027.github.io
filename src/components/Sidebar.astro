@@ -1,0 +1,212 @@
+---
+import { getCollection } from 'astro:content';
+import { ChevronDown, Code, Database, Terminal, Shield, Cpu, Binary } from 'lucide-astro';
+
+interface Props {
+  currentSlug?: string;
+  currentCategory?: string;
+}
+
+const { currentSlug, currentCategory } = Astro.props;
+
+// Load all cheatsheets (non-draft)
+const allCheatsheets = await getCollection('cheatsheets', ({ data }) => !data.draft);
+
+// Sort by order then title
+allCheatsheets.sort((a, b) => (a.data.order || 99) - (b.data.order || 99) || a.data.title.localeCompare(b.data.title));
+
+// Category definitions
+const categories = [
+  { id: 'programming', label: 'Programming', icon: Code },
+  { id: 'dsa', label: 'Data Structures & Algorithms', icon: Binary },
+  { id: 'tools', label: 'Developer Tools', icon: Terminal },
+  { id: 'databases', label: 'Databases', icon: Database },
+  { id: 'computer-science', label: 'Computer Science', icon: Cpu },
+  { id: 'cybersecurity', label: 'Cybersecurity', icon: Shield },
+];
+
+// Build category groups
+const categoryGroups = categories.map((cat) => {
+  const catCheatsheets = allCheatsheets.filter((c) => c.data.category === cat.id);
+  const isCategoryActive = currentCategory === cat.id || catCheatsheets.some((c) => c.slug === currentSlug);
+  const Icon = cat.icon;
+
+  return {
+    id: cat.id,
+    label: cat.label,
+    icon: Icon,
+    isActive: isCategoryActive,
+    cheatsheets: catCheatsheets,
+  };
+});
+---
+
+<aside class="sidebar" aria-label="Reference Documentation Navigation">
+  <div class="sidebar-inner">
+    <div class="sidebar-header">
+      <span class="sidebar-title">CHEATSHEETS</span>
+      <a href="/cheatsheets/" class="sidebar-all-link">View All</a>
+    </div>
+
+    <nav class="sidebar-nav">
+      {categoryGroups.map((cat) => (
+        <div class={`sidebar-group ${cat.isActive ? 'active' : ''}`}>
+          <a href={`/cheatsheets/${cat.id}/`} class="group-header">
+            <div class="group-title-wrapper">
+              <cat.icon size={16} class="group-icon" />
+              <span class="group-title">{cat.label}</span>
+            </div>
+            <span class="group-count">{cat.cheatsheets.length}</span>
+          </a>
+
+          {cat.cheatsheets.length > 0 && (
+            <ul class="group-items">
+              {cat.cheatsheets.map((item) => {
+                const isActive = item.slug === currentSlug;
+                return (
+                  <li class="sidebar-item">
+                    <a
+                      href={`/cheatsheets/${item.data.category}/${item.slug.split('/').pop()}/`}
+                      class={`item-link ${isActive ? 'active' : ''}`}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      <span class="item-title">{item.data.title}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      ))}
+    </nav>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    background-color: var(--background);
+    height: calc(100vh - 64px);
+    position: sticky;
+    top: 64px;
+    overflow-y: auto;
+    z-index: 99;
+  }
+
+  .sidebar-inner {
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+  }
+
+  .sidebar-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .sidebar-all-link {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    transition: color var(--transition);
+  }
+
+  .sidebar-all-link:hover {
+    color: var(--text-primary);
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .sidebar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.65rem;
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all var(--transition);
+  }
+
+  .group-header:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+  }
+
+  .group-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .group-icon {
+    color: var(--text-muted);
+  }
+
+  .group-count {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    color: var(--text-muted);
+  }
+
+  .group-items {
+    list-style: none;
+    padding: 0;
+    margin: 0.25rem 0 0 1.25rem;
+    border-left: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .sidebar-item {
+    display: block;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.825rem;
+    color: var(--text-secondary);
+    border-radius: 4px;
+    transition: all var(--transition);
+  }
+
+  .sidebar-item:hover {
+    color: var(--text-primary);
+    background-color: var(--surface);
+  }
+
+  .sidebar-item.active {
+    color: var(--text-primary);
+    font-weight: 600;
+    background-color: var(--surface-elevated);
+    border-left: 2px solid var(--accent);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+</style>

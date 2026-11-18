@@ -1,0 +1,128 @@
+---
+import { Bookmark } from 'lucide-astro';
+
+interface Props {
+  slug: string;
+  title: string;
+  category: string;
+}
+
+const { slug, title, category } = Astro.props;
+---
+
+<button
+  class="bookmark-btn"
+  data-slug={slug}
+  data-title={title}
+  data-category={category}
+  aria-label="Bookmark this cheatsheet"
+  title="Bookmark this cheatsheet"
+>
+  <Bookmark size={18} class="bookmark-icon" />
+  <span class="bookmark-text">Bookmark</span>
+</button>
+
+<style>
+  .bookmark-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .bookmark-btn:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+  .bookmark-btn.active {
+    background-color: var(--accent);
+    color: var(--background);
+    border-color: var(--accent);
+  }
+
+  .bookmark-btn.active .bookmark-icon {
+    fill: currentColor;
+  }
+</style>
+
+<script>
+  function setupBookmarkButtons() {
+    const buttons = document.querySelectorAll('.bookmark-btn');
+    const STORAGE_KEY = 'codedex-bookmarks';
+
+    function getBookmarks(): any[] {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function saveBookmarks(bookmarks: any[]) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+      } catch (e) {
+        console.error('Failed to save bookmark:', e);
+      }
+    }
+
+    buttons.forEach((btn) => {
+      const button = btn as HTMLButtonElement;
+      const slug = button.getAttribute('data-slug');
+      const title = button.getAttribute('data-title');
+      const category = button.getAttribute('data-category');
+
+      if (!slug || button.dataset.bound) return;
+      button.dataset.bound = 'true';
+
+      const updateState = () => {
+        const bookmarks = getBookmarks();
+        const isBookmarked = bookmarks.some((b: any) => b.slug === slug);
+        const textSpan = button.querySelector('.bookmark-text');
+
+        if (isBookmarked) {
+          button.classList.add('active');
+          if (textSpan) textSpan.textContent = 'Bookmarked';
+        } else {
+          button.classList.remove('active');
+          if (textSpan) textSpan.textContent = 'Bookmark';
+        }
+      };
+
+      updateState();
+
+      button.addEventListener('click', () => {
+        let bookmarks = getBookmarks();
+        const exists = bookmarks.some((b: any) => b.slug === slug);
+
+        if (exists) {
+          bookmarks = bookmarks.filter((b: any) => b.slug !== slug);
+        } else {
+          bookmarks.push({
+            slug,
+            title,
+            category,
+            url: window.location.pathname,
+            timestamp: Date.now()
+          });
+        }
+
+        saveBookmarks(bookmarks);
+        updateState();
+      });
+    });
+  }
+
+  setupBookmarkButtons();
+  document.addEventListener('astro:after-swap', setupBookmarkButtons);
+</script>

@@ -1,0 +1,531 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import BookmarkButton from '../components/BookmarkButton.astro';
+import { ChevronLeft, ChevronRight, Clock, Tag } from 'lucide-astro';
+
+interface Props {
+  title: string;
+  description: string;
+  category: string;
+  subcategory: string;
+  difficulty?: string;
+  dateUpdated?: string | Date;
+  tags?: string[];
+  slug: string;
+  headings: { depth: number; slug: string; text: string }[];
+  prev?: { title: string; href: string };
+  next?: { title: string; href: string };
+}
+
+const {
+  title,
+  description,
+  category,
+  subcategory,
+  difficulty = 'beginner',
+  dateUpdated,
+  tags = [],
+  slug,
+  headings,
+  prev,
+  next,
+} = Astro.props;
+
+const categoryName = category.charAt(0).toUpperCase() + category.slice(1).replace('-', ' ');
+const breadcrumbItems = [
+  { label: 'Cheatsheets', href: '/cheatsheets/' },
+  { label: categoryName, href: `/cheatsheets/${category}/` },
+  { label: title },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Subtle reading progress bar at top -->
+  <div id="reading-progress-bar" class="reading-progress"></div>
+
+  <div class="doc-container">
+    <!-- Left Navigation Sidebar -->
+    <Sidebar currentSlug={slug} currentCategory={category} />
+
+    <!-- Center Content -->
+    <div class="doc-main-wrapper">
+      <article class="doc-content" data-pagefind-body>
+        <Breadcrumbs items={breadcrumbItems} />
+
+        <header class="doc-header">
+          <div class="doc-header-top">
+            <span class="badge-category">{categoryName}</span>
+            <span class="badge-subcategory">{subcategory}</span>
+            <span class={`badge-difficulty ${difficulty}`}>{difficulty}</span>
+          </div>
+
+          <h1 class="doc-title">{title}</h1>
+          <p class="doc-description">{description}</p>
+
+          <div class="doc-metadata">
+            <div class="meta-left">
+              {
+                dateUpdated && (
+                  <span class="meta-item">
+                    <Clock size={14} />
+                    Updated: {new Date(dateUpdated).toLocaleDateString()}
+                  </span>
+                )
+              }
+              {
+                tags.length > 0 && (
+                  <div class="meta-tags">
+                    <Tag size={14} class="tag-icon" />
+                    {tags.map((tag) => (
+                      <span class="meta-tag">#{tag}</span>
+                    ))}
+                  </div>
+                )
+              }
+            </div>
+
+            <BookmarkButton slug={slug} title={title} category={category} />
+          </div>
+        </header>
+
+        <div class="markdown-body">
+          <slot />
+        </div>
+
+        <!-- Previous and Next Navigation -->
+        {
+          (prev || next) && (
+            <div class="prev-next-nav">
+              {prev ? (
+                <a href={prev.href} class="nav-card prev-card">
+                  <div class="nav-card-label">
+                    <ChevronLeft size={14} />
+                    <span>Previous</span>
+                  </div>
+                  <div class="nav-card-title">{prev.title}</div>
+                </a>
+              ) : (
+                <div class="nav-card-placeholder" />
+              )}
+
+              {next && (
+                <a href={next.href} class="nav-card next-card">
+                  <div class="nav-card-label">
+                    <span>Next</span>
+                    <ChevronRight size={14} />
+                  </div>
+                  <div class="nav-card-title">{next.title}</div>
+                </a>
+              )}
+            </div>
+          )
+        }
+      </article>
+    </div>
+
+    <!-- Right Table of Contents -->
+    <aside class="doc-toc-wrapper">
+      <TableOfContents headings={headings} />
+    </aside>
+  </div>
+</BaseLayout>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    height: 2px;
+    background-color: var(--accent);
+    width: 0%;
+    z-index: 99;
+    transition: width 100ms ease-out;
+  }
+
+  .doc-container {
+    display: flex;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+    min-height: calc(100vh - 64px);
+  }
+
+  .doc-main-wrapper {
+    flex: 1;
+    min-width: 0;
+    padding: 2.5rem 2.5rem 5rem 2.5rem;
+  }
+
+  .doc-content {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .doc-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.75rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .doc-header-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .badge-category {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    color: var(--text-primary);
+  }
+
+  .badge-subcategory {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .badge-difficulty {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid transparent;
+  }
+
+  .badge-difficulty.beginner {
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    border-color: rgba(34, 197, 94, 0.2);
+  }
+
+  .badge-difficulty.intermediate {
+    background: rgba(234, 179, 8, 0.1);
+    color: #facc15;
+    border-color: rgba(234, 179, 8, 0.2);
+  }
+
+  .badge-difficulty.advanced {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+
+  .doc-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+
+  .doc-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .doc-metadata {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .meta-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .meta-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .meta-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  /* Right ToC Column */
+  .doc-toc-wrapper {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 2.5rem 1.5rem 2.5rem 0;
+  }
+
+  @media (max-width: 1200px) {
+    .doc-toc-wrapper {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .doc-main-wrapper {
+      padding: 1.5rem 1rem 3rem 1rem;
+    }
+    .doc-title {
+      font-size: 1.75rem;
+    }
+  }
+
+  /* Previous/Next Navigation Cards */
+  .prev-next-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    transition: all var(--transition);
+  }
+
+  .nav-card:hover {
+    border-color: var(--text-muted);
+    background-color: var(--surface-hover);
+  }
+
+  .next-card {
+    text-align: right;
+  }
+
+  .nav-card-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    margin-bottom: 0.35rem;
+  }
+
+  .next-card .nav-card-label {
+    justify-content: flex-end;
+  }
+
+  .nav-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .nav-card-placeholder {
+    visibility: hidden;
+  }
+
+  /* Markdown body typography and styling */
+  :global(.markdown-body) {
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  :global(.markdown-body h2) {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-top: 2.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+  }
+
+  :global(.markdown-body h3) {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+
+  :global(.markdown-body p) {
+    margin-bottom: 1.25rem;
+    color: var(--text-secondary);
+  }
+
+  :global(.markdown-body ul),
+  :global(.markdown-body ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+  }
+
+  :global(.markdown-body li) {
+    margin-bottom: 0.35rem;
+  }
+
+  :global(.markdown-body table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.875rem;
+  }
+
+  :global(.markdown-body th),
+  :global(.markdown-body td) {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+
+  :global(.markdown-body th) {
+    background-color: var(--surface-elevated);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  :global(.markdown-body td) {
+    color: var(--text-secondary);
+  }
+
+  :global(.markdown-body code:not(pre code)) {
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border);
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+  }
+
+  :global(.markdown-body pre) {
+    position: relative;
+    background-color: var(--code-bg) !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.25rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.55;
+  }
+
+  :global(.markdown-body pre code) {
+    font-family: var(--font-mono);
+    background: transparent !important;
+    padding: 0;
+  }
+</style>
+
+<script>
+  // Add copy buttons to all code blocks
+  function setupCodeBlockCopy() {
+    const preBlocks = document.querySelectorAll('.markdown-body pre');
+
+    preBlocks.forEach((pre) => {
+      if (pre.querySelector('.code-copy-btn')) return;
+
+      const button = document.createElement('button');
+      button.className = 'code-copy-btn';
+      button.textContent = 'Copy';
+      button.setAttribute('aria-label', 'Copy code snippet');
+
+      button.addEventListener('click', async () => {
+        const codeElement = pre.querySelector('code');
+        const text = codeElement ? codeElement.innerText : pre.innerText;
+
+        try {
+          await navigator.clipboard.writeText(text);
+          button.textContent = 'Copied!';
+          setTimeout(() => {
+            button.textContent = 'Copy';
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+        }
+      });
+
+      pre.appendChild(button);
+    });
+  }
+
+  // Reading progress
+  function setupReadingProgress() {
+    const progressBar = document.getElementById('reading-progress-bar');
+    if (!progressBar) return;
+
+    window.addEventListener('scroll', () => {
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      if (docHeight <= 0) return;
+      const scrolled = (window.scrollY / docHeight) * 100;
+      progressBar.style.width = `${Math.min(100, Math.max(0, scrolled))}%`;
+    });
+  }
+
+  // Record Recently Viewed
+  function recordRecentlyViewed() {
+    const STORAGE_KEY = 'codedex-recently-viewed';
+    const path = window.location.pathname;
+    const title = document.querySelector('.doc-title')?.textContent?.trim();
+    const category = document.querySelector('.badge-category')?.textContent?.trim();
+
+    if (!title) return;
+
+    try {
+      let recent = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      // Deduplicate
+      recent = recent.filter((item: any) => item.url !== path);
+      recent.unshift({
+        title,
+        category: category || 'Reference',
+        url: path,
+        timestamp: Date.now()
+      });
+      // Limit to 20 recent items
+      if (recent.length > 20) recent = recent.slice(0, 20);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(recent));
+    } catch (e) {
+      console.warn('Unable to save recently viewed item:', e);
+    }
+  }
+
+  setupCodeBlockCopy();
+  setupReadingProgress();
+  recordRecentlyViewed();
+
+  document.addEventListener('astro:after-swap', () => {
+    setupCodeBlockCopy();
+    setupReadingProgress();
+    recordRecentlyViewed();
+  });
+</script>

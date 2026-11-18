@@ -1,0 +1,450 @@
+---
+import { Search, X, CornerDownLeft, ArrowUp, ArrowDown } from 'lucide-astro';
+---
+
+<div id="search-dialog" class="search-modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="search-modal">
+    <div class="search-header">
+      <Search size={18} class="search-modal-icon" />
+      <input
+        type="search"
+        id="search-input"
+        class="search-input"
+        placeholder="Search cheatsheets, syntax, concepts... (Esc to close)"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Search cheatsheets"
+      />
+      <button id="search-close-btn" class="search-close-btn" aria-label="Close search">
+        <X size={18} />
+      </button>
+    </div>
+
+    <div id="search-results" class="search-results">
+      <div class="search-empty-state">
+        <p>Type to search across 40+ cheatsheets and references.</p>
+        <div class="search-quick-tags">
+          <span class="quick-tag-label">Try searching:</span>
+          <button class="quick-tag-btn" data-query="python">Python</button>
+          <button class="quick-tag-btn" data-query="stl">C++ STL</button>
+          <button class="quick-tag-btn" data-query="git">Git</button>
+          <button class="quick-tag-btn" data-query="sql">SQL</button>
+          <button class="quick-tag-btn" data-query="big o">Big O</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-footer">
+      <div class="shortcut-hints">
+        <span class="hint-item"><kbd><ArrowUp size={12} /><ArrowDown size={12} /></kbd> Navigate</span>
+        <span class="hint-item"><kbd><CornerDownLeft size={12} /></kbd> Select</span>
+        <span class="hint-item"><kbd>ESC</kbd> Close</span>
+      </div>
+      <div class="pagefind-branding">Powered by Pagefind</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+
+  .search-modal-backdrop.open {
+    display: flex;
+    opacity: 1;
+  }
+
+  .search-modal {
+    width: 90%;
+    max-width: 640px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalSlide 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes modalSlide {
+    from {
+      transform: translateY(-12px) scale(0.98);
+    }
+    to {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .search-header {
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    gap: 0.75rem;
+  }
+
+  .search-modal-icon {
+    color: var(--text-muted);
+  }
+
+  .search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .search-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: color var(--transition);
+  }
+
+  .search-close-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .search-results {
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .search-empty-state {
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .search-quick-tags {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .quick-tag-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .quick-tag-btn {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    transition: all var(--transition);
+  }
+
+  .quick-tag-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+  :global(.search-result-item) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius);
+    background-color: transparent;
+    border: 1px solid transparent;
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition);
+  }
+
+  :global(.search-result-item:hover),
+  :global(.search-result-item.selected) {
+    background-color: var(--surface-elevated);
+    border-color: var(--border);
+  }
+
+  :global(.search-result-title) {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  :global(.search-result-category) {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface-hover);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  :global(.search-result-excerpt) {
+    font-size: 0.825rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  :global(.search-result-excerpt mark) {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    padding: 0 0.2rem;
+    border-radius: 2px;
+  }
+
+  .search-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1.25rem;
+    border-top: 1px solid var(--border);
+    background-color: var(--surface-elevated);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .shortcut-hints {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .hint-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .hint-item kbd {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .pagefind-branding {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+</style>
+
+<script>
+  let pagefindInstance: any = null;
+  let selectedIndex = -1;
+
+  async function getPagefind() {
+    if (pagefindInstance) return pagefindInstance;
+    try {
+      const baseUrl = (window as any).__BASE_URL__ || '/';
+      const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+      const pagefind = await import(/* @vite-ignore */ `${cleanBase}/pagefind/pagefind.js`);
+      await pagefind.init();
+      pagefindInstance = pagefind;
+      return pagefind;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function initSearchModal() {
+    const dialog = document.getElementById('search-dialog');
+    const input = document.getElementById('search-input') as HTMLInputElement;
+    const closeBtn = document.getElementById('search-close-btn');
+    const resultsContainer = document.getElementById('search-results');
+    const triggerBtn = document.getElementById('search-trigger-btn');
+
+    if (!dialog || !input || !resultsContainer) return;
+
+    function openModal() {
+      dialog?.classList.add('open');
+      dialog?.setAttribute('aria-hidden', 'false');
+      input.value = '';
+      input.focus();
+      renderDefaultState();
+    }
+
+    function closeModal() {
+      dialog?.classList.remove('open');
+      dialog?.setAttribute('aria-hidden', 'true');
+      selectedIndex = -1;
+    }
+
+    triggerBtn?.addEventListener('click', openModal);
+    closeBtn?.addEventListener('click', closeModal);
+    dialog.addEventListener('open-search', openModal);
+
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) closeModal();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dialog.classList.contains('open')) {
+        closeModal();
+      }
+    });
+
+    function renderDefaultState() {
+      if (!resultsContainer) return;
+      resultsContainer.innerHTML = `
+        <div class="search-empty-state">
+          <p>Type to search across 40+ cheatsheets and references.</p>
+          <div class="search-quick-tags">
+            <span class="quick-tag-label">Try searching:</span>
+            <button class="quick-tag-btn" data-query="python">Python</button>
+            <button class="quick-tag-btn" data-query="stl">C++ STL</button>
+            <button class="quick-tag-btn" data-query="git">Git</button>
+            <button class="quick-tag-btn" data-query="sql">SQL</button>
+            <button class="quick-tag-btn" data-query="big o">Big O</button>
+          </div>
+        </div>
+      `;
+
+      resultsContainer.querySelectorAll('.quick-tag-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const query = btn.getAttribute('data-query') || '';
+          input.value = query;
+          performSearch(query);
+        });
+      });
+    }
+
+    async function performSearch(query: string) {
+      if (!query.trim()) {
+        renderDefaultState();
+        return;
+      }
+
+      if (!resultsContainer) return;
+      resultsContainer.innerHTML = `<div class="search-empty-state"><p>Searching...</p></div>`;
+
+      const pagefind = await getPagefind();
+
+      if (pagefind) {
+        try {
+          const search = await pagefind.search(query);
+          const results = await Promise.all(search.results.slice(0, 8).map((r: any) => r.data()));
+          renderResults(results);
+        } catch (err) {
+          resultsContainer.innerHTML = `<div class="search-empty-state"><p>Search error or no results found.</p></div>`;
+        }
+      } else {
+        // Fallback search when in dev mode
+        resultsContainer.innerHTML = `
+          <div class="search-empty-state">
+            <p>Pagefind index is generated during static build (<code>npm run build</code>).</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+              Browse cheatsheets directly via the Cheatsheets menu.
+            </p>
+          </div>
+        `;
+      }
+    }
+
+    function renderResults(results: any[]) {
+      if (!resultsContainer) return;
+      if (results.length === 0) {
+        resultsContainer.innerHTML = `<div class="search-empty-state"><p>No results found for your query.</p></div>`;
+        return;
+      }
+
+      resultsContainer.innerHTML = results.map((item, idx) => `
+        <a href="${item.url}" class="search-result-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}">
+          <div class="search-result-title">
+            <span>${item.meta.title || 'Untitled Reference'}</span>
+            <span class="search-result-category">${item.meta.category || 'Reference'}</span>
+          </div>
+          <div class="search-result-excerpt">${item.excerpt || ''}</div>
+        </a>
+      `).join('');
+
+      selectedIndex = 0;
+    }
+
+    let debounceTimer: any;
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        performSearch(input.value);
+      }, 200);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const items = resultsContainer.querySelectorAll('.search-result-item');
+      if (items.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % items.length;
+        updateSelected(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+        updateSelected(items);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (selectedIndex >= 0 && selectedIndex < items.length) {
+          const activeItem = items[selectedIndex] as HTMLAnchorElement;
+          if (activeItem) window.location.href = activeItem.href;
+        }
+      }
+    });
+
+    function updateSelected(items: NodeListOf<Element>) {
+      items.forEach((item, idx) => {
+        if (idx === selectedIndex) {
+          item.classList.add('selected');
+          item.scrollIntoView({ block: 'nearest' });
+        } else {
+          item.classList.remove('selected');
+        }
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initSearchModal);
+  document.addEventListener('astro:after-swap', initSearchModal);
+</script>
