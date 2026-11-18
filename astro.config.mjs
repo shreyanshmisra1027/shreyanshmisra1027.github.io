@@ -6,9 +6,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: process.env.SITE_URL || 'https://shreyanshmisra1027.github.io',
   base: process.env.BASE_PATH || '/',
-  integrations: [mdx(), sitemap({
-    trailingSlash: 'never',
-  })],
+  integrations: [mdx(), sitemap()],
   markdown: {
     shikiConfig: {
       theme: 'github-dark',
